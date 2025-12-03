@@ -29,12 +29,13 @@ $alertas = obtenerAlertas();
                     <a href="dashboard.php" class="list-group-item active">Dashboard</a>
                     <a href="registrar_siniestro.php" class="list-group-item">Nuevo Siniestro</a>
                     <a href="taller.php" class="list-group-item">Gestión Taller</a>
+                    <a href="repuestos.php" class="list-group-item">Gestión de Repuestos</a>
                 </div>
             </div>
             <div class="col-md-9">
                 <?php if(!empty($alertas)): ?>
                     <div class="alert alert-warning">
-                        <h5>⚠️ Alertas de Retraso</h5>
+                        <h5>Alertas de Retraso</h5>
                         <ul><?php foreach($alertas as $a) echo "<li>$a</li>"; ?></ul>
                     </div>
                 <?php endif; ?>

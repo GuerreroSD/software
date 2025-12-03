@@ -20,6 +20,14 @@ function cambiarEstadoVehiculo($id_vehiculo, $nuevo_estado, $id_usuario) {
         $conn->prepare($sqlH)->execute([':id' => $id_vehiculo, ':ant' => $ant, ':nue' => $nuevo_estado, ':usr' => $id_usuario]);
     }
 }
+function cambiarUbicacionVehiculo($id_vehiculo, $nuevo_estado) {
+    global $conn;
+    
+        $sql = "UPDATE VEHICULOS SET UBICACION = :nuevo WHERE ID_VEHICULO = :id";
+        $conn->prepare($sql)->execute([':nuevo' => $nuevo_estado, ':id' => $id_vehiculo]);
+
+}
+
 
 // RF-13: Alertas de tiempo
 function obtenerAlertas() {
@@ -38,4 +46,5 @@ function obtenerAlertas() {
     }
     return $alertas;
 }
+
 ?>
