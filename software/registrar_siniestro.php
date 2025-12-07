@@ -5,7 +5,7 @@ require 'config/conexion.php';
 if (!isset($_SESSION['user_id'])) { header("Location: index.php"); exit; }
 
 $msg = "";
-// TU LÓGICA ORIGINAL INTACTA
+
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
     try {
         $rut = $_POST['rut']; $nombre = $_POST['nombre']; $vin = $_POST['vin']; $patente = $_POST['patente']; $marca = $_POST['marca'];
@@ -135,4 +135,5 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     }
     </script>
 </body>
+
 </html>
