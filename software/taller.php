@@ -18,26 +18,25 @@ if (isset($_POST['id_mecanico']) && !empty($_POST['id_mecanico'])) {
 
     try {
         // 1. Preparamos la consulta para Oracle
-        // Nota: Usamos SYSDATE para la fecha actual en Oracle
+        
         $sqlAsignacion = "INSERT INTO ASIGNACIONES (ID_VEHICULO, ID_MECANICO, FECHA_ASIGNACION) 
                           VALUES (:vehiculo, :mecanico, SYSDATE)";
         
         $stmt = $conn->prepare($sqlAsignacion);
         
-        // 2. Vinculamos los parámetros (Evita inyección SQL y errores de tipos)
+        // 2. Vinculamos los parámetros 
         $stmt->bindParam(':vehiculo', $id_vehiculo);
         $stmt->bindParam(':mecanico', $id_mecanico);
         
         // 3. Ejecutamos
         if ($stmt->execute()) {
-            // Éxito: Usamos JS para avisar sin romper la página
             echo "<script>
-                    alert('✅ Mecánico asignado correctamente en Oracle.');
+                    alert('Mecánico asignado correctamente en Oracle.');
                     // Opcional: Redirigir para limpiar el POST
                     // window.location.href = window.location.href; 
                   </script>";
         } else {
-            echo "<script>alert('❌ Error al guardar en Oracle.');</script>";
+            echo "<script>alert('Error al guardar en Oracle.');</script>";
         }
 
     } catch (PDOException $e) {
@@ -281,3 +280,4 @@ $mapa_fotos = [
     </div>
 </body>
 </html>
+
