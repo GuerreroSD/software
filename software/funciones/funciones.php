@@ -67,9 +67,8 @@ function registrarHistorialRepuesto($id_repuesto, $accion, $id_usuario) {
                 VALUES (:id, :acc, :usr, SYSDATE)";
         $stmt = $conn->prepare($sql);
         $stmt->execute([':id'=>$id_repuesto, ':acc'=>$accion, ':usr'=>$id_usuario]);
-    } catch (PDOException $e) {
-        // Silencioso
-    }
+    } catch (PDOException $e) 
 }
+
 
 ?>
