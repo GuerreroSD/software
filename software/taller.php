@@ -79,7 +79,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_FILES['foto'])) {
 
 // Modificamos la query para traer también la FOTO (RF-16)
 $sql = "SELECT V.*, 
-        -- Subconsulta para el Mecánico (ya la tenías)
+        -- Subconsulta para el Mecánico 
         (SELECT ID_MECANICO FROM ASIGNACIONES A 
          WHERE A.ID_VEHICULO = V.ID_VEHICULO 
          ORDER BY FECHA_ASIGNACION DESC 
@@ -280,4 +280,5 @@ $mapa_fotos = [
     </div>
 </body>
 </html>
+
 
