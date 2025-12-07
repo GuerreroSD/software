@@ -20,6 +20,7 @@ function cambiarEstadoVehiculo($id_vehiculo, $nuevo_estado, $id_usuario) {
         $conn->prepare($sqlH)->execute([':id' => $id_vehiculo, ':ant' => $ant, ':nue' => $nuevo_estado, ':usr' => $id_usuario]);
     }
 }
+
 function cambiarUbicacionVehiculo($id_vehiculo, $nuevo_estado) {
     global $conn;
     
@@ -54,9 +55,7 @@ function registrarHistorialVehiculo($id_vehiculo, $estado_ant, $estado_nue, $id_
                 VALUES (:id, :ant, :nue, :usr, SYSDATE)";
         $stmt = $conn->prepare($sql);
         $stmt->execute([':id'=>$id_vehiculo, ':ant'=>$estado_ant, ':nue'=>$estado_nue, ':usr'=>$id_usuario]);
-    } catch (PDOException $e) {
-        
-    }
+    } catch (PDOException $e)
 }
 
 // RF-20: Registrar movimientos de repuestos
@@ -72,4 +71,5 @@ function registrarHistorialRepuesto($id_repuesto, $accion, $id_usuario) {
 
 
 ?>
+
 
