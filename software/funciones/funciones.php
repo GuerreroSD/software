@@ -55,7 +55,7 @@ function registrarHistorialVehiculo($id_vehiculo, $estado_ant, $estado_nue, $id_
         $stmt = $conn->prepare($sql);
         $stmt->execute([':id'=>$id_vehiculo, ':ant'=>$estado_ant, ':nue'=>$estado_nue, ':usr'=>$id_usuario]);
     } catch (PDOException $e) {
-        // Silencioso o log de error
+        
     }
 }
 
@@ -72,3 +72,4 @@ function registrarHistorialRepuesto($id_repuesto, $accion, $id_usuario) {
 
 
 ?>
+
