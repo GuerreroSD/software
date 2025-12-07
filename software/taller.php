@@ -32,8 +32,6 @@ if (isset($_POST['id_mecanico']) && !empty($_POST['id_mecanico'])) {
         if ($stmt->execute()) {
             echo "<script>
                     alert('Mecánico asignado correctamente en Oracle.');
-                    // Opcional: Redirigir para limpiar el POST
-                    // window.location.href = window.location.href; 
                   </script>";
         } else {
             echo "<script>alert('Error al guardar en Oracle.');</script>";
@@ -280,5 +278,6 @@ $mapa_fotos = [
     </div>
 </body>
 </html>
+
 
 
