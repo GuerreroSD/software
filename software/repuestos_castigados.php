@@ -17,7 +17,6 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['castigar_id'])) {
 }
 
 // Consulta RF-17: Traer repuestos activos SIN movimiento en 24 meses
-// ADD_MONTHS(SYSDATE, -24) es magia pura de Oracle para restar 2 años exactos.
 $sql = "SELECT * FROM REPUESTOS 
         WHERE FECHA_ULTIMO_MOVIMIENTO < ADD_MONTHS(SYSDATE, -24) 
         AND ESTADO = 'ACTIVO'";
@@ -66,4 +65,5 @@ $castigables = $conn->query($sql)->fetchAll(PDO::FETCH_ASSOC);
         </tbody>
     </table>
 </body>
+
 </html>
