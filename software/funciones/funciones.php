@@ -46,5 +46,30 @@ function obtenerAlertas() {
     }
     return $alertas;
 }
+// RF-19: Registrar movimientos de repuestos
+function registrarHistorialVehiculo($id_vehiculo, $estado_ant, $estado_nue, $id_usuario) {
+    global $conn;
+    try {
+        $sql = "INSERT INTO HISTORIAL_VEHICULOS (ID_VEHICULO, ESTADO_ANTERIOR, ESTADO_NUEVO, ID_USUARIO, FECHA_CAMBIO) 
+                VALUES (:id, :ant, :nue, :usr, SYSDATE)";
+        $stmt = $conn->prepare($sql);
+        $stmt->execute([':id'=>$id_vehiculo, ':ant'=>$estado_ant, ':nue'=>$estado_nue, ':usr'=>$id_usuario]);
+    } catch (PDOException $e) {
+        // Silencioso o log de error
+    }
+}
+
+// RF-20: Registrar movimientos de repuestos
+function registrarHistorialRepuesto($id_repuesto, $accion, $id_usuario) {
+    global $conn;
+    try {
+        $sql = "INSERT INTO HISTORIAL_REPUESTOS (ID_REPUESTO, ACCION, ID_USUARIO, FECHA_MOVIMIENTO) 
+                VALUES (:id, :acc, :usr, SYSDATE)";
+        $stmt = $conn->prepare($sql);
+        $stmt->execute([':id'=>$id_repuesto, ':acc'=>$accion, ':usr'=>$id_usuario]);
+    } catch (PDOException $e) {
+        // Silencioso
+    }
+}
 
 ?>

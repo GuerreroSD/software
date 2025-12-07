@@ -2,14 +2,48 @@
 session_start();
 require 'funciones/funciones.php';
 
+
 // Procesar Cambio de Estado
 if(isset($_POST['nuevo_estado'])) {
     cambiarEstadoVehiculo($_POST['id'], $_POST['nuevo_estado'], $_SESSION['user_id']);
+    registrarHistorialVehiculo($_POST['id'], '', $_POST['nuevo_estado'], $_SESSION['user_id']);
 }
 if(isset($_POST['ubicacion'])) {
     cambiarUbicacionVehiculo($_POST['id'], $_POST['ubicacion'], $_SESSION['user_id']);
 }
+if (isset($_POST['id_mecanico']) && !empty($_POST['id_mecanico'])) {
+    
+    $id_vehiculo = $_POST['id'];
+    $id_mecanico = $_POST['id_mecanico'];
 
+    try {
+        // 1. Preparamos la consulta para Oracle
+        // Nota: Usamos SYSDATE para la fecha actual en Oracle
+        $sqlAsignacion = "INSERT INTO ASIGNACIONES (ID_VEHICULO, ID_MECANICO, FECHA_ASIGNACION) 
+                          VALUES (:vehiculo, :mecanico, SYSDATE)";
+        
+        $stmt = $conn->prepare($sqlAsignacion);
+        
+        // 2. Vinculamos los parámetros (Evita inyección SQL y errores de tipos)
+        $stmt->bindParam(':vehiculo', $id_vehiculo);
+        $stmt->bindParam(':mecanico', $id_mecanico);
+        
+        // 3. Ejecutamos
+        if ($stmt->execute()) {
+            // Éxito: Usamos JS para avisar sin romper la página
+            echo "<script>
+                    alert('✅ Mecánico asignado correctamente en Oracle.');
+                    // Opcional: Redirigir para limpiar el POST
+                    // window.location.href = window.location.href; 
+                  </script>";
+        } else {
+            echo "<script>alert('❌ Error al guardar en Oracle.');</script>";
+        }
+
+    } catch (PDOException $e) {
+        echo "<script>alert('Error Crítico Oracle: " . $e->getMessage() . "');</script>";
+    }
+}
 // Procesar Subida de Foto (RF-16)
 if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_FILES['foto'])) {
     $id_vehiculo = $_POST['id'];
@@ -44,9 +78,33 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_FILES['foto'])) {
 }
 
 
-$sql = "SELECT * FROM VEHICULOS";
+// Modificamos la query para traer también la FOTO (RF-16)
+$sql = "SELECT V.*, 
+        -- Subconsulta para el Mecánico (ya la tenías)
+        (SELECT ID_MECANICO FROM ASIGNACIONES A 
+         WHERE A.ID_VEHICULO = V.ID_VEHICULO 
+         ORDER BY FECHA_ASIGNACION DESC 
+         FETCH FIRST 1 ROWS ONLY) AS MECANICO_ID,
+         
+        -- NUEVA Subconsulta para la Foto del Auto
+        (SELECT RUTA_ARCHIVO FROM DOCUMENTOS D 
+         WHERE D.ID_VEHICULO = V.ID_VEHICULO 
+         ORDER BY FECHA_SUBIDA DESC 
+         FETCH FIRST 1 ROWS ONLY) AS FOTO_VEHICULO
+         
+        FROM VEHICULOS V";
 
 $vehiculos = $conn->query($sql)->fetchAll(PDO::FETCH_ASSOC);
+
+// Pon esto antes de tu tabla HTML
+$mapa_fotos = [
+    '1' => 'mecanicos/mecanico1.jpeg',
+    '2' => 'mecanicos/mecanico2.jpeg',
+    '3' => 'mecanicos/mecanico3.jpeg',
+    '4' => 'mecanicos/mecanico4.jpeg'
+];
+
+
 ?>
 <!DOCTYPE html>
 <html>
@@ -134,30 +192,66 @@ $vehiculos = $conn->query($sql)->fetchAll(PDO::FETCH_ASSOC);
                             </select>
                         </form>
                         
-                        <form method="POST" enctype="multipart/form-data" class="d-inline mt-1">
+                    <div style="text-align: center;">
+                        <?php if (!empty($v['FOTO_VEHICULO'])): ?>
+                            <div style="margin-bottom: 5px;">
+                                <img src="<?php echo htmlspecialchars($v['FOTO_VEHICULO']); ?>" 
+                                    alt="Foto Auto" 
+                                    style="width: 80px; height: 60px; object-fit: cover; border-radius: 4px; border: 1px solid #999; cursor: pointer;"
+                                    onclick="window.open(this.src, '_blank');">
+                                
+                                <br>
+                                <small style="font-size: 10px;"><a href="<?php echo htmlspecialchars($v['FOTO_VEHICULO']); ?>" target="_blank">Ver Grande</a></small>
+                            </div>
+                        <?php endif; ?>
+
+                        <form method="POST" enctype="multipart/form-data" class="d-inline">
                             <input type="hidden" name="id" value="<?php echo $v['ID_VEHICULO']; ?>">
-                            <label class="btn btn-sm btn-outline-warning mt-1" title="Subir Foto (RF-16)">
-                                📷 <input type="file" name="foto" hidden onchange="this.form.submit()">
+                            <label class="btn btn-sm btn-outline-warning" title="Subir/Cambiar Foto (RF-16)" style="font-size: 12px;">
+                                <?php echo (!empty($v['FOTO_VEHICULO'])) ? '🔄 Cambiar' : '📷 Subir Foto'; ?>
+                                <input type="file" name="foto" hidden onchange="this.form.submit()">
                             </label>
                         </form>
+                    </div>
                     </td>
                     <td>
-                        <div class="contenedor-seleccion">
-                    <div>
-                                <label>Selecciona al Mecanico:</label><br>
-                                <select id="selectorMecanico" onchange="cambiarFoto()">
-                                    <option value="0">-- Elige uno --</option>
-                                    <option value="4">Juan Pérez</option>
-                                    <option value="2">Maria Gonzalez</option>
-                                    <option value="3">Carlos "El Tuercas"</option>
-                                    <option value="1">Leku "El Tuercas 2004" </option>
+                        <form method="POST" class="contenedor-seleccion" style="padding: 5px; gap: 5px; flex-direction: column;">
+                            <input type="hidden" name="id" value="<?php echo $v['ID_VEHICULO']; ?>">
+                            
+                            <?php 
+                                $mecanico_actual = $v['MECANICO_ID'] ?? 0; // Si es null, pone 0
+                                
+                                // 2. CALCULAR LA FOTO INICIAL EN PHP
+                                $foto_inicial = isset($mapa_fotos[$mecanico_actual]) 
+                                                ? $mapa_fotos[$mecanico_actual] 
+                                                : 'mecanicos/sin_foto.png';
+                            ?>
+
+                            <div style="width: 100%;">
+                                <label style="font-size:12px; font-weight:bold;">Asignar Mecánico:</label>
+                                
+                                <select name="id_mecanico" id="selector_<?php echo $v['ID_VEHICULO']; ?>" 
+                                        onchange="cambiarFoto(<?php echo $v['ID_VEHICULO']; ?>)"
+                                        class="form-select form-select-sm mb-2">
+                                    
+                                    <option value="">-- Seleccionar --</option>
+                                    
+                                    <option value="4" <?php echo ($mecanico_actual == 4) ? 'selected' : ''; ?>>Juan Pérez</option>
+                                    <option value="2" <?php echo ($mecanico_actual == 2) ? 'selected' : ''; ?>>Maria Gonzalez</option>
+                                    <option value="3" <?php echo ($mecanico_actual == 3) ? 'selected' : ''; ?>>Carlos "El Tuercas"</option>
+                                    <option value="1" <?php echo ($mecanico_actual == 1) ? 'selected' : ''; ?>>Leku "El Tuercas 2004"</option>
                                 </select>
                             </div>
 
-                            <div>
-                                <img id="fotoMecanico" src="mecanicos/sin_foto.png" alt="Foto Mecánico" class="foto-circular">
+                            <div style="display: flex; align-items: center; gap: 10px;">
+                                <img id="foto_<?php echo $v['ID_VEHICULO']; ?>" 
+                                    src="<?php echo $foto_inicial; ?>" 
+                                    alt="Foto" class="foto-circular" style="width:50px; height:50px;">
+                                
+                                <button type="submit" class="btn btn-primary btn-sm">💾 Guardar</button>
                             </div>
-                        </div>
+                        </form>
+                    </td>
                         <script>
                         function cambiarFoto() {
                                     // Obtener el valor seleccionado (1, 2 o 3)
