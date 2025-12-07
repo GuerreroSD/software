@@ -1,16 +1,16 @@
 <?php
 session_start();
-require 'funciones/funciones.php'; // Asegúrate de incluir tu conexión $conn
+require 'funciones/funciones.php';
 // Procesar el "Castigo"
 if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['castigar_id'])) {
     $id_rep = $_POST['castigar_id'];
     
-    // 1. Marcar como castigado en DB
+    // Marcar como castigado en DB
     $sql = "UPDATE REPUESTOS SET ESTADO = 'CASTIGADO', FECHA_ULTIMO_MOVIMIENTO = SYSDATE WHERE ID_REPUESTO = :id";
     $stmt = $conn->prepare($sql);
     $stmt->execute([':id' => $id_rep]);
 
-    // 2. Guardar en Historial (RF-20)
+    // Guardar en Historial (RF-20)
     registrarHistorialRepuesto($id_rep, 'CASTIGADO POR INACTIVIDAD', $_SESSION['user_id']);
     
     echo "<script>alert('Repuesto marcado como CASTIGADO (Pérdida).');</script>";
@@ -67,3 +67,4 @@ $castigables = $conn->query($sql)->fetchAll(PDO::FETCH_ASSOC);
 </body>
 
 </html>
+
