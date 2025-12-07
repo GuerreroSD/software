@@ -11,7 +11,6 @@ $fecha_inicio = $_GET['f_inicio'] ?? date('Y-m-d', strtotime('-1 month'));
 $fecha_fin    = $_GET['f_fin']    ?? date('Y-m-d');
 
 if (isset($_GET['filtrar'])) {
-    // Oracle usa TO_DATE o comparaciones directas si el campo es DATE
     // Ajustamos la query para filtrar por rango
     $filtro_sql = " AND H.FECHA_MOVIMIENTO BETWEEN TO_DATE(:f_ini, 'YYYY-MM-DD') AND TO_DATE(:f_fin, 'YYYY-MM-DD') + 1 ";
     $params[':f_ini'] = $fecha_inicio;
@@ -26,8 +25,6 @@ $sqlVehiculos = "SELECT H.*, V.PATENTE, V.MARCA_MODELO
                  ORDER BY H.FECHA DESC 
                  FETCH FIRST 50 ROWS ONLY";
 $historialV = $conn->query($sqlVehiculos)->fetchAll(PDO::FETCH_ASSOC);
-
-
 ?>
 
 <!DOCTYPE html>
@@ -152,4 +149,5 @@ $historialV = $conn->query($sqlVehiculos)->fetchAll(PDO::FETCH_ASSOC);
     
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 </body>
+
 </html>
