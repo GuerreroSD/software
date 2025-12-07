@@ -3,14 +3,13 @@ session_start();
 require 'funciones/funciones.php';
 
 // Filtros
-$where = " WHERE 1=1 "; // Truco para concatenar ANDs
+$where = " WHERE 1=1 ";
 $params = [];
 
 if (!empty($_GET['compania'])) {
     $where .= " AND V.COMPANIA_SEGUROS = :cia ";
     $params[':cia'] = $_GET['compania'];
 }
-// Puedes agregar filtro de fechas aquí igual...
 
 // Consulta RF-18: Unimos Vehiculos con Repuestos Solicitados y sumamos precios
 $sql = "SELECT V.PATENTE, 
@@ -72,4 +71,5 @@ $reporte = $stmt->fetchAll(PDO::FETCH_ASSOC);
         </tbody>
     </table>
 </body>
+
 </html>
