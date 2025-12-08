@@ -14,7 +14,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['solicitar_repuesto']))
     try {
         $sql = "INSERT INTO SOLICITUDES_REPUESTOS (ID_VEHICULO, NUMERO_PARTE, DESCRIPCION, CANTIDAD, PROVEEDOR, ESTADO, FECHA_SOLICITUD) 
                 VALUES (:id, :parte, :descri, :cant, :prov, 'SOLICITADO', SYSDATE)";
-        // Nota: Agregué 'ESTADO' y 'FECHA_SOLICITUD' explícitamente para evitar nulos si no tienen default en BD
+        
         
         $stmt = $conn->prepare($sql);
         $stmt->execute([
@@ -216,4 +216,5 @@ $repuestos = $stmt_list->fetchAll(PDO::FETCH_ASSOC); // Guardamos todo en un arr
     
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 </body>
+
 </html>
