@@ -11,7 +11,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $stmt->execute();
     $user = $stmt->fetch(PDO::FETCH_ASSOC);
 
-    // Lógica original conservada
+   
     if ($user && $pass == $user['PASSWORD'] && $user['ESTADO'] == 'ACTIVA') {
         $_SESSION['user_id'] = $user['ID_USUARIO'];
         $_SESSION['user_name'] = $user['NOMBRE_COMPLETO'];
@@ -30,7 +30,6 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <style>
         body { background:#eee; display:flex; justify-content:center; align-items:center; height:100vh; padding: 15px; }
-        /* Ajuste responsive: máximo 400px, pero en pantallas chicas ocupa el 100% */
         .card-login { width: 100%; max-width: 400px; }
     </style>
 </head>
@@ -51,4 +50,5 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         </form>
     </div>
 </body>
+
 </html>
