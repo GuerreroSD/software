@@ -1,7 +1,7 @@
 <?php
 session_start();
 require 'config/conexion.php';
-// require 'funciones/funciones.php'; // Descomenta si usas funciones externas
+// require 'funciones/funciones.php'; // 
 
 if (!isset($_SESSION['user_id'])) header("Location: index.php");
 
@@ -48,9 +48,7 @@ if (isset($_GET['accion']) && isset($_GET['id_solicitud'])) {
     exit;
 }
 
-// ==========================================
-// 3. CONSULTAS DE DATOS (Selectores y Listas)
-// ==========================================
+
 
 // A) Obtener vehículos para el formulario
 $vehiculos = $conn->query("SELECT ID_VEHICULO, PATENTE, MARCA_MODELO FROM VEHICULOS ORDER BY PATENTE ASC")->fetchAll(PDO::FETCH_ASSOC);
@@ -218,3 +216,4 @@ $repuestos = $stmt_list->fetchAll(PDO::FETCH_ASSOC); // Guardamos todo en un arr
 </body>
 
 </html>
+
