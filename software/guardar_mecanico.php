@@ -1,5 +1,5 @@
 <?php
-// guardar_mecanico.php
+
 
 require 'config/conexion.php';
 
@@ -35,3 +35,4 @@ if (isset($_POST['id_mecanico']) && !empty($_POST['id_mecanico'])) {
     }
 }
 ?>
+
