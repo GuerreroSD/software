@@ -1,9 +1,9 @@
 <?php
-$host = 'localhost'; // IP de tu servidor Oracle
+$host = 'localhost'; 
 $port = '1521';
-$sid = 'xe'; // Tu Service Name (xe, orcl, etc)
-$username = 'user_developer'; // TU USUARIO ORACLE
-$password = '123456';    // TU CLAVE ORACLE
+$sid = 'xe'; 
+$username = 'user_developer'; 
+$password = '123456';    
 
 $tns = "(DESCRIPTION = (ADDRESS = (PROTOCOL = TCP)(HOST = $host)(PORT = $port)) (CONNECT_DATA = (SERVICE_NAME = $sid) (SID = $sid)))";
 
@@ -13,4 +13,5 @@ try {
 } catch(PDOException $e) {
     die("Error de conexión a Oracle: " . $e->getMessage());
 }
+
 ?>
