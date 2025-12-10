@@ -46,7 +46,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_FILES['foto'])) {
     $id_vehiculo = $_POST['id'];
     $directorio = __DIR__ . '/uploads/';
     
-    // Crear carpeta si no existe
+
     if (!file_exists($directorio)) {
         mkdir($directorio, 0777, true);
     }
@@ -93,7 +93,7 @@ $sql = "SELECT V.*,
 
 $vehiculos = $conn->query($sql)->fetchAll(PDO::FETCH_ASSOC);
 
-// Pon esto antes de tu tabla HTML
+
 $mapa_fotos = [
     '1' => 'mecanicos/mecanico1.jpeg',
     '2' => 'mecanicos/mecanico2.jpeg',
@@ -107,7 +107,7 @@ $mapa_fotos = [
 <html>
 <head><link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
 <style>
-        /* Un poco de estilo para que se vea decente */
+    
         .contenedor-seleccion {
             display: flex;
             align-items: center;
@@ -121,7 +121,7 @@ $mapa_fotos = [
         .foto-circular {
             width: 100px;
             height: 100px;
-            border-radius: 50%; /* Esto hace la foto redonda como en tu diseño */
+            border-radius: 50%; 
             object-fit: cover;
             border: 3px solid #333;
             background-color: #ddd;
@@ -278,6 +278,7 @@ $mapa_fotos = [
     </div>
 </body>
 </html>
+
 
 
 
